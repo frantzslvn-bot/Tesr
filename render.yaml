@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: dracula-system
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: ADMIN_CODE
+        sync: false        # à saisir dans Render (code long, 20 caractères ou plus)
+      - key: GITHUB_TOKEN
+        sync: false        # jeton GitHub avec accès au dépôt de sauvegarde
+      - key: BACKUP_REPO
+        sync: false        # ex : tonpseudo/dracula-backup (dépôt PRIVÉ)
+      - key: BACKUP_BRANCH
+        value: main
+      - key: BACKUP_INTERVAL_MIN
+        value: "3"

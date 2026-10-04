@@ -1,0 +1,19 @@
+{
+  "name": "dracula-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dracula System : site de groupe avec Coins, jeux multijoueurs, boutique et espace admin",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node test/logic.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
