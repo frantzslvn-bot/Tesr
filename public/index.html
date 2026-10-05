@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b1030">
+<title>Dracula System</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1b1030; --surface:#2a1a4a; --surface2:#37235e; --line:#47307a;
+    --text:#f3eeff; --muted:#a898cf; --gold:#f5b82e; --pink:#ff5c8a; --mint:#3ddbb0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  @supports (height:100dvh){html,body{height:100dvh}}
+  body{font-family:'DM Sans',system-ui,sans-serif;background:#0f0820;color:var(--text);display:flex;align-items:center;justify-content:center}
+  h1,h2,h3,.display{font-family:'Bricolage Grotesque','DM Sans',sans-serif}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  .phone{width:100%;max-width:420px;height:100%;max-height:860px;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden}
+  @media(min-width:500px){.phone{border-radius:32px;border:1px solid var(--line);height:92vh}}
+
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.02em;user-select:none;-webkit-user-select:none}
+  .wallet{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-weight:700;color:var(--gold)}
+  .coin{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe08a,var(--gold) 60%,#c58a0c);display:inline-block}
+  .wallet.pop{animation:pop .4s}
+  @keyframes pop{50%{transform:scale(1.15)}}
+
+  main{flex:1;overflow-y:auto;padding:16px}
+  .view{display:none}.view.on{display:block}
+
+  nav{display:flex;border-top:1px solid var(--line);background:var(--surface)}
+  nav button{flex:1;padding:10px 0 12px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted)}
+  nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  nav button.on{color:var(--gold)}
+
+  .daily{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(120deg,var(--pink),#9b4dff);padding:14px 16px;border-radius:18px;margin-bottom:16px}
+  .daily b{font-size:15px}.daily span{font-size:12px;opacity:.9;display:block}
+  .btn{background:var(--gold);color:#2b1a00;font-weight:700;padding:9px 14px;border-radius:12px;font-size:13px;white-space:nowrap}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.ghost{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}
+
+  .post{margin-bottom:22px}
+  .who{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--gold));flex:none}
+  .av.b{background:linear-gradient(135deg,var(--mint),#4d7bff)}
+  .av.c{background:linear-gradient(135deg,#9b4dff,var(--pink))}
+  .who b{font-size:14px}.who small{display:block;color:var(--muted);font-size:12px}
+  .pic{aspect-ratio:1/1;border-radius:16px;background:linear-gradient(160deg,#4d7bff,#9b4dff 55%,var(--pink));display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);font-size:13px}
+  .pic.alt{background:linear-gradient(160deg,var(--mint),#4d7bff)}
+  .acts{display:flex;gap:16px;padding:10px 2px 4px}
+  .acts button{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
+  .acts svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .acts .liked{color:var(--pink)}.acts .liked svg{fill:var(--pink)}
+  .cap{font-size:14px;line-height:1.45;padding:0 2px}
+  .coms{display:none;margin-top:8px;background:var(--surface);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.5}
+  .coms.on{display:block}.coms p+p{margin-top:6px}.coms b{margin-right:4px}
+
+  h2{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:130px}
+  .game .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--surface2)}
+  .game b{font-size:14px}.game small{color:var(--gold);font-size:12px;font-weight:700;margin-top:auto}
+
+  .rank{margin-top:22px}
+  .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .row:last-child{border:none}.row .pos{width:22px;color:var(--muted);font-weight:700}
+  .row .pts{margin-left:auto;color:var(--gold);font-weight:700}
+  .row.me{color:var(--gold);font-weight:700}
+
+  .reward{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+  .reward .ic{width:48px;height:48px;border-radius:14px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;flex:none}
+  .reward div:nth-child(2){flex:1}.reward b{font-size:14px}.reward small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .note{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+  .demo{font-size:12px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:8px 12px;margin-bottom:14px;line-height:1.5}
+
+  .chat-list .row{cursor:pointer}
+  .chat-list small{color:var(--muted);display:block;font-size:12px}
+  .dot{margin-left:auto;background:var(--pink);color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:2px 7px}
+  .chat{display:none;flex-direction:column;height:100%}
+  .chat.on{display:flex}
+  .chat-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .chat-top button{color:var(--gold);font-size:22px;padding:0 6px}
+  .msgs{flex:1;display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
+  .m{max-width:78%;padding:9px 12px;border-radius:16px;font-size:14px;line-height:1.4;background:var(--surface)}
+  .m.me{align-self:flex-end;background:var(--pink)}
+  .m.img{padding:4px;background:var(--surface)}
+  .m.img div{width:180px;height:120px;border-radius:12px;background:linear-gradient(160deg,var(--mint),#4d7bff)}
+  .composer{display:flex;gap:8px;align-items:center}
+  .composer div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:10px 14px;color:var(--muted);font-size:14px}
+
+  .prof{text-align:center}
+  .prof .av{width:84px;height:84px;margin:4px auto 10px}
+  .stats{display:flex;justify-content:center;gap:28px;margin:14px 0}
+  .stats b{display:block;font-size:18px;font-family:'Bricolage Grotesque',sans-serif}
+  .stats small{color:var(--muted);font-size:12px}
+  .creator{margin-top:22px;text-align:left;background:var(--surface);border:1px dashed var(--gold);border-radius:16px;padding:14px;font-size:13px;line-height:1.6}
+  .creator b{color:var(--gold)}
+  .creator a{color:var(--gold)}
+
+  .overlay{position:absolute;inset:0;background:var(--bg);z-index:5;display:none;flex-direction:column}
+  .overlay.on{display:flex}
+  #gate{align-items:center;justify-content:center;padding:24px;background:rgba(15,8,32,.94)}
+  #boot,#blocked,#welcome{align-items:center;justify-content:center;padding:24px;text-align:center}
+  #welcome{z-index:7;background:rgba(15,8,32,.97)}
+  #blocked{z-index:8}
+  #boot{z-index:9}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;width:100%;display:flex;flex-direction:column;gap:12px}
+  .card h2{margin:0}
+  .err{color:var(--pink);font-size:13px;min-height:18px}
+  input.f{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 14px;color:var(--text);font:inherit;width:100%}
+  input.f:focus-visible{outline:2px solid var(--gold)}
+  .link{color:var(--muted);font-size:13px;align-self:center}
+  .tabs{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto}
+  .tabs button{flex:1 0 auto;padding:8px 10px;border-radius:10px;background:var(--surface);color:var(--muted);font-size:11px;font-weight:700}
+  .tabs button.on{background:var(--gold);color:#2b1a00}
+  .amt{width:78px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:6px 8px;color:var(--text);font:inherit;font-size:13px}
+  .gname{width:100%}
+  .acc.gift{flex-wrap:wrap}
+  .acc.gift .who2{flex:1 1 100%}
+  .acc.gift .btns{margin-left:0;width:100%;justify-content:flex-end}
+  .sendbox{display:flex;gap:8px;margin:12px 0 4px}
+  .sendbox input{flex:1;min-width:0}
+  .asec{font-size:12px;font-weight:700;color:var(--muted);padding:14px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+  .asearch{padding:12px 16px}
+  .alist{flex:1;overflow-y:auto;padding:0 16px 16px}
+  .acc{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .acc .who2{min-width:0;flex:1}
+  .acc .who2 small{display:block;color:var(--muted);font-size:12px}
+  .acc .btns{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .sm{padding:6px 9px;border-radius:9px;font-size:12px;font-weight:700;background:var(--surface2)}
+  .sm.red{background:var(--pink);color:#fff}
+  .tag{font-size:11px;color:var(--mint);font-weight:700}
+  .empty{color:var(--muted);font-size:14px;padding:20px 0;text-align:center}
+  .toast{z-index:10;position:absolute;left:50%;bottom:84px;width:max-content;max-width:90%;text-align:center;transform:translateX(-50%) translateY(20px);background:var(--mint);color:#052b20;font-weight:700;font-size:13px;padding:9px 16px;border-radius:18px;opacity:0;pointer-events:none;transition:.25s}
+  .toast.on{opacity:1;transform:translateX(-50%)}
+  .toast.bad{background:var(--pink);color:#fff}
+
+  /* Fil de publications */
+  .compose{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:14px}
+  .compose textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);font:inherit;font-size:14px;resize:none;min-height:64px;line-height:1.4}
+  .compose textarea:focus-visible{outline:2px solid var(--gold)}
+  .compose .row2{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .compose .count{margin-left:auto;font-size:12px;color:var(--muted)}
+  .compose .prev{position:relative;margin-top:8px;display:none}
+  .compose .prev.on{display:block}
+  .compose .prev img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;display:block}
+  .compose .prev button{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;background:rgba(15,8,32,.8);color:#fff;font-size:16px}
+  .compose .hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
+  .ftabs{display:flex;gap:8px;margin-bottom:14px}
+  .ftabs button{flex:1;padding:8px;border-radius:10px;background:var(--surface);color:var(--muted);font-size:13px;font-weight:700}
+  .ftabs button.on{background:var(--gold);color:#2b1a00}
+  .post .who .nm{background:none;border:none;padding:0;text-align:left;cursor:pointer;color:var(--text)}
+  .post .who .nm b{font-size:14px}
+  .post .who .more{margin-left:auto;color:var(--muted);font-size:20px;padding:4px 8px;line-height:1}
+  .post img.pic{width:100%;aspect-ratio:auto;max-height:480px;object-fit:cover;border-radius:16px;display:block;background:var(--surface)}
+  .post .pic.broken{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);background:var(--surface)}
+  .cap{white-space:pre-wrap;word-break:break-word}
+  .cap a,.coms a{color:var(--gold);word-break:break-all}
+  .cap b.nm2{margin-right:4px;cursor:pointer}
+  .post .coms{display:none}
+  .post .coms.on{display:block}
+  .coms .c{display:flex;gap:6px;align-items:flex-start}
+  .coms .c .t{flex:1;min-width:0;word-break:break-word}
+  .coms .c button{color:var(--muted);font-size:12px;padding:0 4px}
+  .coms form{display:flex;gap:6px;margin-top:8px}
+  .coms form input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--text);font:inherit;font-size:13px}
+  .coms form input:focus-visible{outline:2px solid var(--gold)}
+  .coms .none{color:var(--muted);font-size:12px}
+  .morebtn{display:block;margin:0 auto 10px}
+  .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:16px}
+  .pgrid button{aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--surface);padding:0;position:relative;font-size:11px;color:var(--muted);line-height:1.3}
+  .pgrid button img{width:100%;height:100%;object-fit:cover;display:block}
+  .pgrid button span{display:flex;height:100%;align-items:center;justify-content:center;padding:6px;text-align:center;overflow:hidden}
+  .ovbody{flex:1;overflow-y:auto;padding:16px}
+  .ovhead{display:flex;align-items:center;gap:10px}
+  .ovhead .back{color:var(--gold);font-size:24px;padding:0 6px}
+  #pv,#pd{z-index:6}
+  .actrow{display:flex;gap:8px;justify-content:center;margin-top:4px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<link rel="stylesheet" href="/css/games.css">
+<link rel="stylesheet" href="/css/chat.css">
+</head>
+<body>
+<noscript>Dracula System a besoin de JavaScript pour fonctionner.</noscript>
+<div class="phone">
+  <header>
+    <div class="logo display" id="logo">Dracula System</div>
+    <div class="wallet" id="wallet" aria-label="Solde de Coins"><span class="coin"></span><span id="coins">0</span></div>
+  </header>
+
+  <main>
+    <!-- FIL -->
+    <section class="view on" id="v-fil">
+      <div class="daily">
+        <div><b>Bonus du jour</b><span>Reviens chaque jour pour gagner des Coins</span></div>
+        <button class="btn" id="claim" disabled>Bonus</button>
+      </div>
+
+      <div class="compose">
+        <textarea id="c-text" maxlength="500" placeholder="Partage quelque chose avec le groupe..." aria-label="Nouvelle publication"></textarea>
+        <div class="prev" id="c-prev"><img id="c-img" alt="Aperçu de la photo"><button id="c-rm" aria-label="Retirer la photo">&times;</button></div>
+        <div class="row2">
+          <button class="btn ghost" id="c-photo" type="button">📷 Photo</button>
+          <span class="count" id="c-count">0 / 500</span>
+          <button class="btn" id="c-send" type="button">Publier</button>
+        </div>
+        <input type="file" id="c-file" accept="image/*" hidden>
+        <p class="hint">Photos uniquement. Pour une vidéo ou un document, colle son lien dans le texte.</p>
+      </div>
+
+      <div class="ftabs">
+        <button class="on" data-scope="all" id="ft-all">Pour toi</button>
+        <button data-scope="following" id="ft-fol">Abonnements</button>
+      </div>
+      <div id="feed"><p class="empty">Chargement...</p></div>
+      <button class="btn ghost morebtn" id="feed-more" style="display:none">Voir plus</button>
+    </section>
+
+    <!-- JEUX -->
+    <section class="view" id="v-jeux">
+      <h2>Jeux</h2>
+      <div class="grid">
+        <button class="game" data-game="tictactoe"><span class="ic">⭕</span><b>Morpion</b><small>Robot ou joueur</small></button>
+        <button class="game" data-game="penalty"><span class="ic">⚽</span><b>Penalty</b><small>Robot ou joueur</small></button>
+        <button class="game" data-game="chess"><span class="ic">♟️</span><b>Échecs</b><small>Robot ou joueur</small></button>
+        <button class="game" data-game="quiz"><span class="ic">🧠</span><b>Quiz</b><small>Robot ou joueur</small></button>
+        <button class="game" data-game="roulette" style="grid-column:span 2"><span class="ic">🎡</span><b>Roulette</b><small>Contre la banque</small></button>
+      </div>
+      <div class="rank">
+        <h2>Classement</h2>
+        <div id="lb"><p class="empty">Chargement...</p></div>
+        <p class="note" id="lb-me"></p>
+      </div>
+    </section>
+
+    <!-- BOUTIQUE -->
+    <section class="view" id="v-boutique">
+      <h2>Boutique</h2>
+      <div id="shop"></div>
+      <p class="note" id="shop-msg">Les Coins se gagnent en jouant et avec le bonus du jour.</p>
+    </section>
+
+    <!-- MESSAGES : discussions privées et groupes (construit par js/chat.js) -->
+    <section class="view" id="v-msg"><p class="empty">Chargement...</p></section>
+
+    <!-- PROFIL -->
+    <section class="view" id="v-prof">
+      <div class="prof">
+        <div class="av"></div>
+        <h2 id="p-name" style="margin-bottom:2px">Mon profil</h2>
+        <div class="stats">
+          <div><b id="p-posts">0</b><small>Publications</small></div>
+          <div><b id="p-fol">0</b><small>Abonnés</small></div>
+          <div><b id="p-ing">0</b><small>Abonnements</small></div>
+        </div>
+        <div class="stats" style="margin-top:0">
+          <div><b id="p-coins">0</b><small>Coins</small></div>
+          <div><b id="p-rank">-</b><small>Classement</small></div>
+        </div>
+        <div class="betrow">
+          <input class="f" id="p-input" maxlength="20" placeholder="Nouveau pseudo" autocomplete="off" aria-label="Nouveau pseudo">
+          <button class="btn" id="p-save">Enregistrer</button>
+        </div>
+        <div class="pgrid" id="p-grid"></div>
+        <div class="creator"><b>Créateur</b><br>Gmail : <a href="mailto:draculagorst@gmail.com">draculagorst@gmail.com</a><br>Telegram : <a href="https://t.me/dracula509">@dracula509</a></div>
+        <p class="note" style="text-align:center;margin-top:14px"><a href="/legal.html#mentions" target="_blank" rel="noopener" style="color:var(--muted)">Mentions légales</a> · <a href="/legal.html#cgu" target="_blank" rel="noopener" style="color:var(--muted)">CGU</a> · <a href="/legal.html#confidentialite" target="_blank" rel="noopener" style="color:var(--muted)">Confidentialité</a></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Choix du pseudo -->
+  <div class="overlay" id="welcome">
+    <div class="card">
+      <h2>Choisis ton pseudo</h2>
+      <p class="note">Il s'affiche dans les parties et le classement. Tu pourras le changer dans ton profil.</p>
+      <input class="f" id="w-name" maxlength="20" placeholder="Ton pseudo" autocomplete="off" aria-label="Pseudo">
+      <p class="err" id="w-err" role="alert"></p>
+      <button class="btn" id="w-go">Entrer</button>
+      <p class="note">En entrant, tu confirmes avoir 15 ans ou plus et tu acceptes les <a href="/legal.html#cgu" target="_blank" rel="noopener" style="color:var(--gold)">conditions d'utilisation</a> et la <a href="/legal.html#confidentialite" target="_blank" rel="noopener" style="color:var(--gold)">politique de confidentialité</a>.</p>
+    </div>
+  </div>
+
+  <!-- Accès créateur -->
+  <div class="overlay" id="gate">
+    <div class="card">
+      <h2>Accès créateur</h2>
+      <input class="f" id="code" type="password" placeholder="Code" autocomplete="off" aria-label="Code créateur">
+      <p class="err" id="g-err" role="alert"></p>
+      <button class="btn" id="enter">Entrer</button>
+      <button class="link" id="gclose">Annuler</button>
+      <p class="note">Le code est vérifié par le serveur.</p>
+    </div>
+  </div>
+
+  <!-- Espace admin -->
+  <div class="overlay" id="admin">
+    <header><div class="logo display">Espace admin</div><button class="btn ghost" id="aclose">Fermer</button></header>
+    <div class="asearch"><input class="f" id="search" type="search" placeholder="Rechercher un compte" aria-label="Rechercher un compte"></div>
+    <div class="tabs">
+      <button class="on" data-t="all" id="t-all">Comptes</button>
+      <button data-t="ban" id="t-ban">Liste noire</button>
+      <button data-t="adm" id="t-adm">Admins</button>
+      <button data-t="buy" id="t-buy">Achats</button>
+      <button data-t="rep" id="t-rep">Signalés</button>
+      <button data-t="coin" id="t-coin">Recharge</button>
+      <button data-t="gift" id="t-gift">Cadeaux</button>
+    </div>
+    <div class="alist" id="alist"></div>
+  </div>
+
+  <!-- Profil d'un membre -->
+  <div class="overlay" id="pv">
+    <header><div class="ovhead"><button class="back" id="pv-back" aria-label="Retour">‹</button><b class="display" id="pv-name"></b></div><span></span></header>
+    <div class="ovbody"><div class="prof" id="pv-body"></div></div>
+  </div>
+
+  <!-- Détail d'une publication -->
+  <div class="overlay" id="pd">
+    <header><div class="ovhead"><button class="back" id="pd-back" aria-label="Retour">‹</button><b class="display">Publication</b></div><span></span></header>
+    <div class="ovbody" id="pd-body"></div>
+  </div>
+
+  <!-- Écran de jeu (rempli par js/games.js) -->
+  <div class="overlay" id="gv">
+    <header>
+      <button class="back" id="gv-back" aria-label="Retour">‹</button>
+      <div class="ttl display" id="gv-ttl"></div>
+      <span class="eye" id="gv-eye"></span>
+    </header>
+    <div id="gv-body"></div>
+  </div>
+
+  <!-- Compte bloqué / supprimé -->
+  <div class="overlay" id="blocked">
+    <div class="card">
+      <h2 id="b-title">Compte indisponible</h2>
+      <p class="note" id="b-text"></p>
+    </div>
+  </div>
+
+  <!-- Connexion au serveur -->
+  <div class="overlay on" id="boot">
+    <div class="card">
+      <h2>Dracula System</h2>
+      <p class="note" id="boot-text">Connexion...</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <nav>
+    <button class="on" data-v="fil"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Fil</button>
+    <button data-v="jeux"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10v5M4.5 12.5h5M16 11h.01M18.5 14h.01"/></svg>Jeux</button>
+    <button data-v="boutique"><svg viewBox="0 0 24 24"><path d="M4 8h16l-1.5 12h-13z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg>Boutique</button>
+    <button data-v="msg"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Messages</button>
+    <button data-v="prof"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profil</button>
+  </nav>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/games.js"></script>
+<script src="/js/chat.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var TOKEN_KEY = 'dracula_token';
+  var ICONS = { premium: '▶️', code: '🎬', autre: '🎁' };
+
+  /* ---------- Outils ---------- */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
+  };
+
+  var toastEl = $('toast'), toastTimer;
+  function say(t, bad) {
+    toastEl.textContent = t;
+    toastEl.classList.toggle('bad', !!bad);
+    toastEl.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 2600);
+  }
+
+  var app = {
+    me: null, config: null, gamesReady: false, rank: null, total: null,
+    pendingName: null, invite: null,
+    admin: { level: null, tab: 'all', q: '', data: null }
+  };
+
+  var m = location.pathname.match(/^\/m\/([A-Za-z0-9]{3,8})\/?$/);
+  if (m) { app.invite = m[1].toUpperCase(); history.replaceState(null, '', '/'); }
+
+  /* ---------- Portefeuille ---------- */
+  var coinsEl = $('coins'), wallet = $('wallet');
+  function showCoins(n) {
+    coinsEl.textContent = n;
+    wallet.classList.remove('pop'); void wallet.offsetWidth; wallet.classList.add('pop');
+    $('p-coins').textContent = n;
+  }
+  function setMe(me) {
+    var before = app.me ? app.me.coins : null;
+    app.me = me;
+    if (before !== me.coins) showCoins(me.coins); else coinsEl.textContent = me.coins;
+    $('p-name').textContent = me.name;
+    $('p-coins').textContent = me.coins;
+    if (app.gamesReady) Games.refreshMe();
+  }
+
+  /* ---------- Navigation ---------- */
+  var navButtons = document.querySelectorAll('nav button');
+  navButtons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      navButtons.forEach(function (x) { x.classList.remove('on'); });
+      document.querySelectorAll('.view').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      $('v-' + b.dataset.v).classList.add('on');
+      if (b.dataset.v === 'jeux' || b.dataset.v === 'prof') loadLb();
+      if (b.dataset.v === 'boutique') renderShop();
+      if (b.dataset.v === 'msg') Chat.show();
+      if (b.dataset.v === 'prof') loadMyProfile();
+      if (b.dataset.v === 'fil' && Date.now() - feedState.at > 20000) loadFeed(true);
+    });
+  });
+
+  /* ---------- Connexion ---------- */
+  var socket = io();
+  var bootTimer = setTimeout(function () {
+    $('boot-text').textContent = 'Le serveur se réveille, patiente quelques secondes...';
+  }, 4000);
+
+  function hideBoot() { clearTimeout(bootTimer); $('boot').classList.remove('on'); }
+  function showWelcome(err) {
+    hideBoot();
+    $('w-err').textContent = err || '';
+    $('welcome').classList.add('on');
+    setTimeout(function () { $('w-name').focus(); }, 50);
+  }
+  function showBlocked(title, text) {
+    hideBoot();
+    $('b-title').textContent = title; $('b-text').textContent = text;
+    $('blocked').classList.add('on');
+  }
+
+  function hello(name) {
+    var token = store.get(TOKEN_KEY);
+    var data = {};
+    if (token) data.token = token; else if (name) data.name = name;
+    socket.emit('hello', data, function (res) {
+      if (!res || res.error) {
+        if (res && res.error === 'banned') return showBlocked('Compte bloqué', 'Ton compte a été placé en liste noire par l\'admin.');
+        return showWelcome((res && res.error) || 'Connexion impossible, réessaie.');
+      }
+      store.set(TOKEN_KEY, res.token);
+      app.config = res.config;
+      setMe(res.me);
+      setDaily(res.daily);
+      renderShop();
+      loadFeed(true); loadMyProfile();
+      if (!app.gamesReady) {
+        Games.init({
+          socket: socket, say: say,
+          getMe: function () { return app.me; },
+          getConfig: function () { return app.config; }
+        });
+        app.gamesReady = true;
+      }
+      Chat.init({
+        socket: socket, say: say, esc: esc, linkify: linkify, compress: compress,
+        token: function () { return store.get(TOKEN_KEY) || ''; },
+        getMe: function () { return app.me; }
+      });
+      Chat.setUnread(res.unread || 0);
+      hideBoot();
+      // compte tout neuf sans pseudo choisi (ex. données perdues côté serveur) : on demande un pseudo
+      if (res.created && !app.pendingName) showWelcome(''); else $('welcome').classList.remove('on');
+      app.pendingName = null;
+      if (res.activeRoom) Games.resume(res.activeRoom);
+      else if (app.invite) { Games.join(app.invite, false); app.invite = null; }
+    });
+  }
+
+  socket.on('connect', function () {
+    if (store.get(TOKEN_KEY) || app.pendingName) hello(app.pendingName);
+    else showWelcome('');
+  });
+  socket.on('disconnect', function (why) {
+    if (why !== 'io server disconnect') say('Connexion perdue, reconnexion...', true);
+  });
+  socket.on('connect_error', function () {
+    $('boot-text').textContent = 'Connexion impossible, nouvel essai...';
+  });
+  socket.on('me', function (me) { setMe(me); renderShop(); });
+  socket.on('coins:received', function (r) {
+    if (r) say('+' + r.amount + ' Coins reçus de ' + r.from);
+  });
+  // L'admin a changé les cadeaux ou le bonus du jour : la boutique se met à jour sans recharger
+  socket.on('shop:update', function (r) {
+    if (!r || !app.config) return;
+    app.config.shop = r.shop; app.config.dailyBonus = r.dailyBonus;
+    renderShop();
+    if (!$('claim').disabled) setDaily(false);
+    if (app.admin.tab === 'gift' && $('admin').classList.contains('on')) { app.admin.gifts = r; renderAdmin(); }
+  });
+  socket.on('admin:ledger', function (rec) {
+    if (!rec) return;
+    app.admin.ledger = [rec].concat(app.admin.ledger || []).slice(0, 60);
+    if (app.admin.tab === 'coin' && $('admin').classList.contains('on')) renderLedger();
+  });
+  socket.on('kicked', function (info) {
+    if (info && info.reason === 'delete') {
+      store.del(TOKEN_KEY);
+      showBlocked('Compte supprimé', 'Ton compte a été supprimé par l\'admin.');
+    } else {
+      showBlocked('Compte bloqué', 'Ton compte a été placé en liste noire par l\'admin.');
+    }
+  });
+  socket.on('admin:purchase', function (rec) {
+    say('Achat : ' + rec.name + ' a pris « ' + rec.item + ' »');
+    if ($('admin').classList.contains('on')) loadAdmin();
+  });
+  socket.on('admin:delivered', function () { if ($('admin').classList.contains('on')) loadAdmin(); });
+
+  /* Choix du pseudo */
+  function submitName() {
+    var name = $('w-name').value.trim();
+    if (name.length < 2) { $('w-err').textContent = 'Choisis un pseudo d\'au moins 2 caractères.'; return; }
+    if (app.me) {
+      socket.emit('rename', { name: name }, function (r) {
+        if (r && r.ok) { $('welcome').classList.remove('on'); say('Pseudo enregistré'); }
+        else $('w-err').textContent = (r && r.error) || 'Erreur, réessaie.';
+      });
+    } else {
+      app.pendingName = name;
+      hello(name);
+    }
+  }
+  $('w-go').addEventListener('click', submitName);
+  $('w-name').addEventListener('keydown', function (e) { if (e.key === 'Enter') submitName(); });
+
+  /* ---------- Bonus du jour ---------- */
+  var claim = $('claim');
+  function setDaily(done) {
+    claim.disabled = !!done;
+    claim.textContent = done ? 'Récupéré' : '+' + (app.config ? app.config.dailyBonus : 10) + ' Coins';
+  }
+  claim.addEventListener('click', function () {
+    claim.disabled = true;
+    socket.emit('daily', {}, function (r) {
+      if (!r || r.error) { say((r && r.error) || 'Erreur', true); setDaily(r && /déjà/.test(r.error || '')); return; }
+      setDaily(true); say('+' + r.gain + ' Coins ajoutés');
+    });
+  });
+
+  /* ---------- Classement ---------- */
+  function loadLb() {
+    if (!app.me) return;
+    socket.emit('lb', {}, function (r) {
+      if (!r || !r.ok) return;
+      app.rank = r.rank; app.total = r.total;
+      $('p-rank').textContent = r.rank ? '#' + r.rank : '-';
+      var av = ['', 'b', 'c'];
+      $('lb').innerHTML = r.list.length ? r.list.map(function (x, i) {
+        return '<div class="row' + (app.me && x.id === app.me.id ? ' me' : '') + '"><span class="pos">' + (i + 1) + '</span>' +
+          '<div class="av ' + av[i % 3] + '" style="width:30px;height:30px"></div>' + esc(x.name) + '<span class="pts">' + x.coins + '</span></div>';
+      }).join('') : '<p class="empty">Personne pour le moment.</p>';
+      $('lb-me').textContent = r.rank && r.rank > 10 ? 'Tu es n° ' + r.rank + ' sur ' + r.total + ' joueurs.' : '';
+    });
+  }
+
+  /* ---------- Boutique ---------- */
+  function renderShop() {
+    if (!app.config) return;
+    $('shop').innerHTML = app.config.shop.map(function (it) {
+      return '<div class="reward"><div class="ic">' + (ICONS[it.id] || '🎁') + '</div><div><b>' + esc(it.name) +
+        '</b><small>Remise en main propre par l\'admin</small></div>' +
+        '<button class="btn buy" data-id="' + esc(it.id) + '" data-name="' + esc(it.name) + '" data-cost="' + it.cost + '">' + it.cost + '</button></div>';
+    }).join('');
+  }
+  $('shop').addEventListener('click', function (e) {
+    var b = e.target.closest('.buy'); if (!b) return;
+    var cost = parseInt(b.dataset.cost, 10);
+    if (!window.confirm('Échanger ' + cost + ' Coins contre « ' + b.dataset.name + ' » ?')) return;
+    b.disabled = true;
+    socket.emit('shop:buy', { id: b.dataset.id }, function (r) {
+      b.disabled = false;
+      if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+      say('Récompense échangée');
+      $('shop-msg').textContent = 'Achat enregistré : ' + r.item.name + '. Contacte le créateur (onglet Profil) pour recevoir ta récompense.';
+    });
+  });
+
+  /* ---------- Profil ---------- */
+  $('p-save').addEventListener('click', function () {
+    var name = $('p-input').value.trim();
+    if (name.length < 2) { say('Pseudo trop court', true); return; }
+    socket.emit('rename', { name: name }, function (r) {
+      if (!r || !r.ok) { say((r && r.error) || 'Erreur', true); return; }
+      $('p-input').value = ''; say('Pseudo modifié');
+    });
+  });
+
+  /* ---------- Fil de publications ---------- */
+  var feedState = { scope: 'all', next: null, more: false, loading: false, at: 0 };
+  var composeImg = null, uploading = false;
+  var LINK_RE = /https?:\/\/(?:(?!&quot;|&#39;|&lt;|&gt;)\S)+/g;
+
+  // Texte sûr : tout est échappé, puis seuls les liens http(s) deviennent cliquables
+  function linkify(t) {
+    return esc(t).replace(LINK_RE, function (u) {
+      var tail = '', m = u.match(/[.,;:!?)\]]+$/);
+      if (m) { tail = m[0]; u = u.slice(0, -tail.length); }
+      return '<a href="' + u + '" target="_blank" rel="noopener noreferrer nofollow ugc">' + u + '</a>' + tail;
+    });
+  }
+  function ago(ts) {
+    var s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+    if (s < 60) return 'à l\'instant';
+    if (s < 3600) return 'il y a ' + Math.floor(s / 60) + ' min';
+    if (s < 86400) return 'il y a ' + Math.floor(s / 3600) + ' h';
+    if (s < 7 * 86400) return 'il y a ' + Math.floor(s / 86400) + ' j';
+    return new Date(ts).toLocaleDateString('fr-FR');
+  }
+  function avClass(id) { var h = 0, i; for (i = 0; i < id.length; i++) h = (h + id.charCodeAt(i)) % 3; return ['', 'b', 'c'][h]; }
+  function canMod() { return !!(app.me && app.me.admin) || !!app.admin.level; }
+  var HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9.1C1 8.6 3 5 6.5 5c2 0 3.5 1.1 5.5 3.2C14 6.1 15.5 5 17.5 5 21 5 23 8.6 21.3 11.9 19 16.4 12 21 12 21z"/></svg>';
+  var BULLE = '<svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
+
+  function renderPost(p) {
+    return '<article class="post" data-id="' + esc(p.id) + '" data-by="' + esc(p.author.id) + '">' +
+      '<div class="who"><div class="av ' + avClass(p.author.id) + '"></div>' +
+      '<button class="nm" data-user="' + esc(p.author.id) + '"><b>' + esc(p.author.name) + '</b><small>' + esc(ago(p.at)) + '</small></button>' +
+      '<button class="more" data-act="menu" aria-label="Options de la publication">⋯</button></div>' +
+      (p.img ? '<img class="pic" src="/img/' + esc(p.img) + '" alt="Photo de ' + esc(p.author.name) + '" loading="lazy" data-broken="1">' : '') +
+      '<div class="acts">' +
+      '<button class="like' + (p.liked ? ' liked' : '') + '" aria-label="J\'aime">' + HEART + '<span>' + p.likes + '</span></button>' +
+      '<button class="com" aria-label="Commentaires">' + BULLE + '<span>' + p.comments + '</span></button></div>' +
+      (p.text ? '<p class="cap"><b class="nm2" data-user="' + esc(p.author.id) + '">' + esc(p.author.name) + '</b>' + linkify(p.text) + '</p>' : '') +
+      '<div class="coms"></div></article>';
+  }
+  // Photo introuvable (sauvegarde pas encore envoyée, par exemple) : on remplace par un message
+  document.addEventListener('error', function (e) {
+    var el = e.target;
+    if (el && el.tagName === 'IMG' && el.dataset && el.dataset.broken) {
+      var d = document.createElement('div'); d.className = 'pic broken'; d.textContent = 'Photo indisponible';
+      el.replaceWith(d);
+    }
+  }, true);
+
+  function loadFeed(reset) {
+    if (!app.me || feedState.loading) return;
+    feedState.loading = true;
+    var data = { scope: feedState.scope };
+    if (!reset && feedState.next) data.before = feedState.next;
+    socket.emit('feed:list', data, function (r) {
+      feedState.loading = false;
+      if (!r || !r.ok) { if (reset) $('feed').innerHTML = '<p class="empty">Impossible de charger le fil.</p>'; return; }
+      feedState.at = Date.now(); feedState.next = r.next; feedState.more = r.more;
+      var html = r.posts.map(renderPost).join('');
+      if (reset) {
+        $('feed').innerHTML = html || '<p class="empty">' + (feedState.scope === 'following'
+          ? 'Rien pour le moment. Abonne-toi à des membres pour voir leurs publications ici.'
+          : 'Aucune publication pour le moment. Sois le premier !') + '</p>';
+      } else $('feed').insertAdjacentHTML('beforeend', html);
+      $('feed-more').style.display = r.more ? 'block' : 'none';
+    });
+  }
+  $('feed-more').addEventListener('click', function () { loadFeed(false); });
+  document.querySelectorAll('.ftabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.ftabs button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); feedState.scope = b.dataset.scope; feedState.next = null;
+      loadFeed(true);
+    });
+  });
+
+  /* Actions sur les publications (fil, détail) : un seul écouteur par conteneur */
+  function bindPosts(box) {
+    box.addEventListener('click', function (e) {
+      var post = e.target.closest('.post'); if (!post) return;
+      var id = post.dataset.id;
+      var u = e.target.closest('[data-user]');
+      if (u) { openProfile(u.dataset.user); return; }
+      var like = e.target.closest('.like');
+      if (like) {
+        socket.emit('post:like', { id: id }, function (r) {
+          if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+          like.classList.toggle('liked', r.liked); like.querySelector('span').textContent = r.likes;
+        });
+        return;
+      }
+      var com = e.target.closest('.com');
+      if (com) { toggleComments(post); return; }
+      var cdel = e.target.closest('.cdel');
+      if (cdel) {
+        if (!window.confirm('Supprimer ce commentaire ?')) return;
+        socket.emit('comment:delete', { id: id, cid: cdel.dataset.cid }, function (r) {
+          if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+          cdel.closest('.c').remove(); post.querySelector('.com span').textContent = r.count;
+        });
+        return;
+      }
+      if (e.target.closest('[data-act="menu"]')) postMenu(post);
+    });
+    box.addEventListener('submit', function (e) {
+      var f = e.target.closest('form'); if (!f) return;
+      e.preventDefault();
+      var post = f.closest('.post'), inp = f.querySelector('input'), text = inp.value.trim();
+      if (!text) return;
+      inp.disabled = true;
+      socket.emit('post:comment', { id: post.dataset.id, text: text }, function (r) {
+        inp.disabled = false;
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        inp.value = '';
+        var none = post.querySelector('.coms .none'); if (none) none.remove();
+        f.insertAdjacentHTML('beforebegin', commentHtml(r.comment, post.dataset.by));
+        post.querySelector('.com span').textContent = r.count;
+      });
+    });
+  }
+  function commentHtml(c, postBy) {
+    var del = (c.mine || (app.me && postBy === app.me.id) || canMod())
+      ? '<button class="cdel" data-cid="' + esc(c.id) + '" aria-label="Supprimer le commentaire">×</button>' : '';
+    return '<p class="c"><span class="t"><b>' + esc(c.author.name) + '</b>' + linkify(c.text) + '</span>' + del + '</p>';
+  }
+  function toggleComments(post) {
+    var box = post.querySelector('.coms');
+    if (box.classList.toggle('on') && !box.dataset.loaded) {
+      box.innerHTML = '<p class="none">Chargement...</p>';
+      socket.emit('post:comments', { id: post.dataset.id }, function (r) {
+        if (!r || r.error) { box.innerHTML = '<p class="none">Impossible de charger.</p>'; return; }
+        box.dataset.loaded = '1';
+        box.innerHTML = (r.comments.length ? r.comments.map(function (c) { return commentHtml(c, post.dataset.by); }).join('') : '<p class="none">Aucun commentaire.</p>') +
+          '<form><input maxlength="200" placeholder="Ajouter un commentaire..." aria-label="Commentaire" autocomplete="off"><button class="btn" type="submit">OK</button></form>';
+      });
+    }
+  }
+  function postMenu(post) {
+    var id = post.dataset.id, mine = app.me && post.dataset.by === app.me.id;
+    if (mine || canMod()) {
+      if (!window.confirm('Supprimer cette publication ?')) return;
+      socket.emit('post:delete', { id: id }, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        post.remove(); say('Publication supprimée'); loadMyProfile();
+        if ($('pd').classList.contains('on')) $('pd').classList.remove('on');
+      });
+    } else {
+      if (!window.confirm('Signaler cette publication aux admins ?')) return;
+      socket.emit('post:report', { id: id }, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say('Merci, les admins vont regarder');
+      });
+    }
+  }
+  bindPosts($('feed')); bindPosts($('pd-body'));
+
+  /* Publier : photo réduite en JPEG par le navigateur, envoyée puis publiée avec le texte */
+  function compress(file, cb) {
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () {
+      URL.revokeObjectURL(url);
+      var w = img.naturalWidth, h = img.naturalHeight, scale = Math.min(1, 1080 / Math.max(w, h)), q = 0.82;
+      (function attempt() {
+        var c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(w * scale)); c.height = Math.max(1, Math.round(h * scale));
+        var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+        x.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (b) {
+          if (!b) return cb(null);
+          if (b.size > 650 * 1024) { if (q > 0.45) q -= 0.12; else scale *= 0.8; if (scale < 0.2) return cb(null); return attempt(); }
+          cb(b);
+        }, 'image/jpeg', q);
+      })();
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); cb(null); };
+    img.src = url;
+  }
+  function clearImg() {
+    composeImg = null; $('c-prev').classList.remove('on'); $('c-img').removeAttribute('src'); $('c-file').value = '';
+  }
+  $('c-photo').addEventListener('click', function () { $('c-file').click(); });
+  $('c-rm').addEventListener('click', clearImg);
+  $('c-file').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    if (!/^image\//.test(f.type)) { say('Photos uniquement. Pour une vidéo ou un document, colle son lien dans le texte.', true); this.value = ''; return; }
+    uploading = true; $('c-send').disabled = true; $('c-photo').textContent = 'Envoi...';
+    compress(f, function (blob) {
+      if (!blob) { uploading = false; $('c-send').disabled = false; $('c-photo').textContent = '📷 Photo'; say('Image illisible ou trop lourde', true); return; }
+      fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'image/jpeg', 'X-Token': store.get(TOKEN_KEY) || '' }, body: blob })
+        .then(function (res) { return res.json(); })
+        .then(function (r) {
+          uploading = false; $('c-send').disabled = false; $('c-photo').textContent = '📷 Photo';
+          if (!r || r.error) { say((r && r.error) || 'Envoi impossible', true); clearImg(); return; }
+          composeImg = r.name; $('c-img').src = URL.createObjectURL(blob); $('c-prev').classList.add('on');
+        })
+        .catch(function () { uploading = false; $('c-send').disabled = false; $('c-photo').textContent = '📷 Photo'; say('Envoi impossible, réessaie.', true); });
+    });
+  });
+  $('c-text').addEventListener('input', function () { $('c-count').textContent = this.value.length + ' / 500'; });
+  $('c-send').addEventListener('click', function () {
+    if (uploading) return;
+    var text = $('c-text').value.trim();
+    if (!text && !composeImg) { say('Écris quelque chose ou ajoute une photo.', true); return; }
+    $('c-send').disabled = true;
+    socket.emit('post:create', { text: text, img: composeImg }, function (r) {
+      $('c-send').disabled = false;
+      if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+      $('c-text').value = ''; $('c-count').textContent = '0 / 500'; clearImg();
+      var empty = $('feed').querySelector('.empty'); if (empty) empty.remove();
+      $('feed').insertAdjacentHTML('afterbegin', renderPost(r.post));
+      say('Publié'); loadMyProfile();
+    });
+  });
+
+  /* Profils */
+  function thumbs(grid) {
+    return grid.map(function (g) {
+      return '<button data-post="' + esc(g.id) + '" aria-label="Ouvrir la publication">' +
+        (g.img ? '<img src="/img/' + esc(g.img) + '" alt="" loading="lazy">' : '<span>' + esc(g.text || '...') + '</span>') + '</button>';
+    }).join('');
+  }
+  function loadMyProfile() {
+    if (!app.me) return;
+    socket.emit('user:profile', { id: app.me.id }, function (r) {
+      if (!r || !r.ok) return;
+      $('p-posts').textContent = r.posts; $('p-fol').textContent = r.followers; $('p-ing').textContent = r.following;
+      $('p-grid').innerHTML = thumbs(r.grid);
+    });
+  }
+  $('p-grid').addEventListener('click', function (e) { var b = e.target.closest('[data-post]'); if (b) openPost(b.dataset.post); });
+  function openPost(id) {
+    socket.emit('post:get', { id: id }, function (r) {
+      if (!r || r.error) { say((r && r.error) || 'Publication introuvable', true); return; }
+      $('pd-body').innerHTML = renderPost(r.post); $('pd').classList.add('on');
+    });
+  }
+  $('pd-back').addEventListener('click', function () { $('pd').classList.remove('on'); });
+  function openProfile(id) {
+    if (app.me && id === app.me.id) {   // son propre profil : onglet Profil
+      document.querySelector('nav button[data-v="prof"]').click();
+      $('pv').classList.remove('on'); $('pd').classList.remove('on'); return;
+    }
+    socket.emit('user:profile', { id: id }, function (r) {
+      if (!r || !r.ok) { say((r && r.error) || 'Compte introuvable', true); return; }
+      $('pv-name').textContent = r.user.name;
+      $('pv-body').innerHTML = '<div class="av ' + avClass(r.user.id) + '" style="width:84px;height:84px;margin:4px auto 10px"></div>' +
+        '<h2 style="margin-bottom:2px">' + esc(r.user.name) + '</h2>' +
+        '<div class="stats"><div><b>' + r.posts + '</b><small>Publications</small></div><div><b id="pv-fol">' + r.followers + '</b><small>Abonnés</small></div><div><b>' + r.following + '</b><small>Abonnements</small></div></div>' +
+        '<div style="display:flex;gap:8px;justify-content:center"><button class="btn' + (r.isFollowing ? ' ghost' : '') + '" id="pv-follow" data-id="' + esc(r.user.id) + '">' + (r.isFollowing ? 'Abonné' : 'Suivre') + '</button>' +
+        '<button class="btn ghost" id="pv-msg" data-id="' + esc(r.user.id) + '">Écrire</button></div>' +
+        '<div class="sendbox"><input class="f" id="pv-amt" type="number" inputmode="numeric" min="1" step="1" placeholder="Montant en Coins" aria-label="Montant en Coins">' +
+        '<button class="btn" id="pv-send" data-id="' + esc(r.user.id) + '" data-name="' + esc(r.user.name) + '">Envoyer des Coins</button></div>' +
+        '<div class="pgrid">' + thumbs(r.grid) + '</div>';
+      $('pv').classList.add('on');
+    });
+  }
+  $('pv-back').addEventListener('click', function () { $('pv').classList.remove('on'); });
+  $('pv-body').addEventListener('click', function (e) {
+    var g = e.target.closest('[data-post]'); if (g) { openPost(g.dataset.post); return; }
+    var wm = e.target.closest('#pv-msg');
+    if (wm) { $('pv').classList.remove('on'); Chat.openWith(wm.dataset.id); return; }
+    var sd = e.target.closest('#pv-send');
+    if (sd) {
+      var amt = parseInt($('pv-amt').value, 10);
+      if (!Number.isInteger(amt) || amt <= 0) { say('Entre un montant valide', true); return; }
+      if (!window.confirm('Envoyer ' + amt + ' Coins à ' + sd.dataset.name + ' ?')) return;
+      sd.disabled = true;
+      socket.emit('coins:send', { to: sd.dataset.id, amount: amt }, function (r) {
+        sd.disabled = false;
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        $('pv-amt').value = ''; say(amt + ' Coins envoyés à ' + sd.dataset.name);
+      });
+      return;
+    }
+    var f = e.target.closest('#pv-follow'); if (!f) return;
+    f.disabled = true;
+    socket.emit('user:follow', { id: f.dataset.id }, function (r) {
+      f.disabled = false;
+      if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+      f.textContent = r.following ? 'Abonné' : 'Suivre'; f.classList.toggle('ghost', r.following);
+      $('pv-fol').textContent = r.followers; feedState.scope === 'following' && loadFeed(true);
+    });
+  });
+
+  /* ---------- Accès créateur : 3 appuis rapides sur le logo ---------- */
+  var taps = 0, tapTimer;
+  $('logo').addEventListener('click', function () {
+    taps++; clearTimeout(tapTimer); tapTimer = setTimeout(function () { taps = 0; }, 800);
+    if (taps >= 3) { taps = 0; openGate(); }
+  });
+  function showGate() {
+    $('g-err').textContent = '';
+    $('gate').classList.add('on'); $('code').focus();
+  }
+  function openGate() {
+    if (!app.me) return;
+    if (app.me.admin) {   // un admin déjà nommé n'a pas besoin du code
+      socket.emit('admin:login', {}, function (r) {
+        if (r && r.ok) openAdmin(r.level); else showGate();
+      });
+    } else showGate();
+  }
+  $('gclose').addEventListener('click', function () { $('gate').classList.remove('on'); $('code').value = ''; });
+  function submitCode() {
+    var c = $('code');
+    if (!c.value.trim()) { $('g-err').textContent = 'Entre le code.'; return; }
+    socket.emit('admin:login', { code: c.value }, function (r) {
+      c.value = '';
+      if (!r || r.error) { $('g-err').textContent = (r && r.error) || 'Erreur'; return; }
+      $('gate').classList.remove('on');
+      openAdmin(r.level);
+    });
+  }
+  $('enter').addEventListener('click', submitCode);
+  $('code').addEventListener('keydown', function (e) { if (e.key === 'Enter') submitCode(); });
+
+  /* ---------- Espace admin ---------- */
+  function openAdmin(level) {
+    app.admin.level = level; app.admin.q = ''; $('search').value = '';
+    $('admin').classList.add('on');
+    loadAdmin();
+  }
+  $('aclose').addEventListener('click', function () { $('admin').classList.remove('on'); });
+
+  function loadAdmin() {
+    socket.emit('admin:list', {}, function (r) {
+      if (!r || r.error) { say((r && r.error) || 'Accès refusé', true); $('admin').classList.remove('on'); return; }
+      app.admin.level = r.level; app.admin.data = r;
+      socket.emit('admin:reports', {}, function (rr) {
+        r.reports = (rr && rr.reports) || [];
+        renderAdmin();
+      });
+    });
+  }
+
+  function matches(n) { return n.toLowerCase().indexOf(app.admin.q.toLowerCase()) !== -1; }
+
+  function renderAdmin() {
+    var A = app.admin, d = A.data; if (!d) return;
+    var live = d.accounts.filter(function (a) { return !a.banned; });
+    var banned = d.accounts.filter(function (a) { return a.banned; });
+    var admins = live.filter(function (a) { return a.admin; });
+    $('t-all').textContent = 'Comptes (' + live.length + ')';
+    $('t-ban').textContent = 'Liste noire (' + banned.length + ')';
+    $('t-adm').textContent = 'Admins (' + (1 + admins.length) + ')';
+    var todo = d.purchases.filter(function (p) { return p.status !== 'done'; }).length;
+    $('t-buy').textContent = 'Achats (' + todo + ' à livrer)';
+    var reps = d.reports || [];
+    $('t-rep').textContent = 'Signalés (' + reps.length + ')';
+    var isOwner = A.level === 'owner', myId = app.me && app.me.id, h = '';
+
+    function row(a, buttons) {
+      var info = a.coins + ' Coins' + (a.online ? ', en ligne' : '');
+      return '<div class="acc"><div class="av" style="width:32px;height:32px"></div><div class="who2">' + esc(a.name) +
+        (a.admin ? ' <span class="tag">Admin</span>' : '') + '<small>' + esc(info) + '</small></div><div class="btns">' + buttons + '</div></div>';
+    }
+    function btn(act, id, label, red) {
+      return '<button class="sm' + (red ? ' red' : '') + '" data-act="' + act + '" data-id="' + esc(id) + '">' + esc(label) + '</button>';
+    }
+
+    if (A.tab === 'all') {
+      live.forEach(function (a) {
+        if (!matches(a.name)) return;
+        var b = '';
+        if (isOwner) b += btn(a.admin ? 'unadmin' : 'admin', a.id, a.admin ? 'Retirer admin' : 'Admin');
+        if (a.id !== myId && (isOwner || !a.admin)) b += btn('delete', a.id, 'Supprimer', true) + btn('ban', a.id, 'Liste noire', true);
+        h += row(a, b);
+      });
+    } else if (A.tab === 'ban') {
+      banned.forEach(function (a) {
+        if (!matches(a.name)) return;
+        h += row(a, btn('unban', a.id, 'Retirer de la liste') + (isOwner ? btn('delete', a.id, 'Supprimer', true) : ''));
+      });
+    } else if (A.tab === 'adm') {
+      if (matches('Dracula')) h += '<div class="acc"><div class="av" style="width:32px;height:32px"></div><div class="who2">Dracula <span class="tag">Créateur</span></div></div>';
+      admins.forEach(function (a) {
+        if (!matches(a.name)) return;
+        h += row(a, isOwner ? btn('unadmin', a.id, 'Retirer admin') : '');
+      });
+    } else if (A.tab === 'coin') {
+      live.forEach(function (a) {
+        if (!matches(a.name)) return;
+        var can = isOwner || (!a.admin && a.id !== myId);   // un admin nommé ne peut pas donner à un admin ni à lui-même
+        var b = can ? '<input class="amt" type="number" inputmode="numeric" min="1" step="1" placeholder="Coins" aria-label="Montant">' +
+          btn('give', a.id, 'Donner') + btn('take', a.id, 'Retirer', true) : '';
+        h += row(a, b);
+      });
+      h += '<div class="asec">Journal</div><div id="a-ledger"></div>';
+    } else if (A.tab === 'gift') {
+      var g = A.gifts;
+      if (!g) h = '<p class="empty">Chargement...</p>';
+      else {
+        h += '<div class="asec">Bonus du jour</div><div class="acc"><div class="who2">Coins offerts chaque jour</div><div class="btns">' +
+          '<input class="amt" id="g-daily" type="number" inputmode="numeric" min="0" step="1" value="' + g.dailyBonus + '" aria-label="Bonus du jour">' + btn('daily', 'x', 'Enregistrer') + '</div></div>';
+        h += '<div class="asec">Cadeaux (' + g.shop.length + ')</div>';
+        g.shop.forEach(function (it) {
+          h += '<div class="acc gift"><div class="who2"><input class="f gname" maxlength="40" value="' + esc(it.name) + '" aria-label="Nom du cadeau"></div>' +
+            '<div class="btns"><input class="amt" type="number" inputmode="numeric" min="1" step="1" value="' + it.cost + '" aria-label="Prix">' +
+            btn('gsave', it.id, 'Enregistrer') + btn('gdel', it.id, 'Retirer', true) + '</div></div>';
+        });
+        h += '<div class="asec">Nouveau cadeau</div><div class="acc gift"><div class="who2"><input class="f gname" id="g-new-name" maxlength="40" placeholder="Nom du cadeau" aria-label="Nom du nouveau cadeau"></div>' +
+          '<div class="btns"><input class="amt" id="g-new-cost" type="number" inputmode="numeric" min="1" step="1" placeholder="Prix" aria-label="Prix">' + btn('gadd', 'x', 'Ajouter') + '</div></div>';
+      }
+    } else if (A.tab === 'rep') {
+      reps.forEach(function (r) {
+        if (!matches(r.author.name) && !matches(r.text || '')) return;
+        h += '<div class="acc"><div class="who2">' + esc(r.author.name) + ' <span class="tag">' + r.count + ' signalement' + (r.count > 1 ? 's' : '') + '</span>' +
+          '<small>' + esc(r.text || (r.img ? '(photo)' : '')) + (r.reasons.length ? ' · ' + esc(r.reasons.join(', ')) : '') + '</small></div>' +
+          '<div class="btns">' + btn('rview', r.post, 'Voir') + btn('rclear', r.post, 'Ignorer') + btn('rdel', r.post, 'Supprimer', true) + '</div></div>';
+      });
+    } else {
+      d.purchases.slice().sort(function (x, y) { return (x.status === 'done') - (y.status === 'done'); }).forEach(function (p) {
+        if (!matches(p.name) && !matches(p.item)) return;
+        var done = p.status === 'done';
+        h += '<div class="acc"><div class="who2">' + esc(p.name) + ' : ' + esc(p.item) +
+          ' <span class="tag">' + (done ? 'Livré' : 'À livrer') + '</span>' +
+          '<small>' + esc(p.cost) + ' Coins, ' + esc(new Date(p.at).toLocaleString('fr-FR')) + '</small></div>' +
+          (done ? '' : '<div class="btns">' + btn('deliver', p.id, 'Livré') + '</div>') + '</div>';
+      });
+    }
+    $('alist').innerHTML = h || '<p class="empty">Aucun résultat</p>';
+    if (A.tab === 'coin') renderLedger();
+  }
+
+  function renderLedger() {
+    var box = $('a-ledger'); if (!box) return;
+    var list = app.admin.ledger || [];
+    box.innerHTML = list.length ? list.map(function (x) {
+      var line = x.type === 'send' ? esc(x.fromName) + ' → ' + esc(x.toName) + ' : ' + x.amount + ' Coins'
+        : x.type === 'give' ? esc(x.fromName || 'Créateur') + ' a donné ' + x.amount + ' Coins à ' + esc(x.toName)
+        : esc(x.fromName || 'Créateur') + ' a retiré ' + x.amount + ' Coins à ' + esc(x.toName);
+      return '<div class="acc"><div class="who2">' + line + '<small>' + esc(new Date(x.at).toLocaleString('fr-FR')) + '</small></div></div>';
+    }).join('') : '<p class="empty">Aucune opération.</p>';
+  }
+  function loadLedger() {
+    socket.emit('admin:ledger', {}, function (r) {
+      if (r && r.ok) app.admin.ledger = r.list;
+      renderAdmin();
+    });
+  }
+  function loadGifts() {
+    socket.emit('admin:gifts', {}, function (r) {
+      if (r && r.ok) app.admin.gifts = { shop: r.shop, dailyBonus: r.dailyBonus };
+      renderAdmin();
+    });
+  }
+
+  $('search').addEventListener('input', function (e) { app.admin.q = e.target.value; renderAdmin(); });
+  document.querySelectorAll('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); app.admin.tab = b.dataset.t;
+      if (app.admin.tab === 'coin') loadLedger(); else if (app.admin.tab === 'gift') loadGifts(); else renderAdmin();
+    });
+  });
+  $('alist').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-act]'); if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'rview') { openPost(b.dataset.id); return; }
+    if (act === 'give' || act === 'take') {
+      var n = parseInt(b.closest('.acc').querySelector('.amt').value, 10);
+      if (!Number.isInteger(n) || n <= 0) { say('Entre un montant valide', true); return; }
+      b.disabled = true;
+      socket.emit('admin:give', { id: b.dataset.id, amount: act === 'take' ? -n : n }, function (r) {
+        b.disabled = false;
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say((r.applied > 0 ? '+' : '') + r.applied + ' Coins, solde : ' + r.coins);
+        loadAdmin();
+      });
+      return;
+    }
+    if (act === 'daily') {
+      socket.emit('admin:daily', { amount: parseInt($('g-daily').value, 10) }, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say('Bonus du jour enregistré');
+      });
+      return;
+    }
+    if (act === 'gsave' || act === 'gadd') {
+      var gr = b.closest('.acc');
+      var nm = act === 'gadd' ? $('g-new-name').value : gr.querySelector('.gname').value;
+      var cs = parseInt(act === 'gadd' ? $('g-new-cost').value : gr.querySelector('.amt').value, 10);
+      var msg = { name: nm, cost: cs }; if (act === 'gsave') msg.id = b.dataset.id;
+      socket.emit('admin:gift:save', msg, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say(act === 'gadd' ? 'Cadeau ajouté' : 'Cadeau enregistré');
+        app.admin.gifts = { shop: r.shop, dailyBonus: r.dailyBonus }; renderAdmin();
+      });
+      return;
+    }
+    if (act === 'gdel') {
+      if (!window.confirm('Retirer ce cadeau de la boutique ?')) return;
+      socket.emit('admin:gift:remove', { id: b.dataset.id }, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say('Cadeau retiré'); app.admin.gifts = { shop: r.shop, dailyBonus: r.dailyBonus }; renderAdmin();
+      });
+      return;
+    }
+    if (act === 'deliver') {
+      socket.emit('admin:deliver', { id: b.dataset.id }, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say('Marqué comme livré'); loadAdmin();
+      });
+      return;
+    }
+    if (act === 'rclear') {
+      socket.emit('admin:clear', { id: b.dataset.id }, function (r) { if (r && r.ok) { say('Signalement ignoré'); loadAdmin(); } });
+      return;
+    }
+    if (act === 'rdel') {
+      if (!window.confirm('Supprimer cette publication ?')) return;
+      socket.emit('post:delete', { id: b.dataset.id }, function (r) {
+        if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+        say('Publication supprimée'); loadAdmin(); feedState.at = 0;
+      });
+      return;
+    }
+    if ((act === 'delete' || act === 'ban') && !window.confirm((act === 'delete' ? 'Supprimer' : 'Mettre en liste noire') + ' ce compte ?')) return;
+    socket.emit('admin:act', { act: act, id: b.dataset.id }, function (r) {
+      if (!r || r.error) { say((r && r.error) || 'Erreur', true); return; }
+      say('Fait');
+      loadAdmin();
+    });
+  });
+})();
+</script>
+</body>
+</html>
