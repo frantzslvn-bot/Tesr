@@ -1,0 +1,116 @@
+/* Dracula System : mise en forme de la messagerie (construite par js/chat.js).
+   Utilise les variables de index.html : --bg --surface --surface2 --line --text --muted --gold --pink --mint */
+
+/* ---------- Badge de non-lus sur l'onglet Messages ---------- */
+nav button{position:relative}
+.nbadge{display:none;position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--pink);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+.nbadge.on{display:block}
+
+/* ---------- Page : liste des conversations ---------- */
+.ch-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.ch-list{display:flex;flex-direction:column}
+.ch-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 2px;border-bottom:1px solid var(--line)}
+.ch-mid{flex:1;min-width:0}
+.ch-mid b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-mid small{display:block;color:var(--muted);font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-row.unread .ch-mid small{color:var(--text);font-weight:700}
+.ch-side{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none;font-size:11px;color:var(--muted)}
+.ch-side .dot{margin-left:0}
+.ch-hint{color:var(--muted);font-size:13px;line-height:1.5;text-align:center;padding:22px 12px}
+
+/* Pastille ronde avec l'initiale du membre ou du groupe */
+.ch-av{border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-family:'Bricolage Grotesque','DM Sans',sans-serif;background:linear-gradient(135deg,var(--pink),var(--gold))}
+.ch-av.b{background:linear-gradient(135deg,var(--mint),#4d7bff)}
+.ch-av.c{background:linear-gradient(135deg,#9b4dff,var(--pink))}
+.ch-av.g{background:linear-gradient(135deg,#4d7bff,#9b4dff)}
+
+/* ---------- Écrans par-dessus le site (conversation, nouvelle discussion, infos) ---------- */
+#cv{z-index:7}
+#cn{z-index:8}
+#cg{z-index:9}
+#cv .back,#cn .back,#cg .back{color:var(--gold);font-size:26px;line-height:1;padding:0 8px}
+#cv header{justify-content:flex-start;gap:6px}
+.ch-title{display:flex;align-items:center;gap:10px;min-width:0;flex:1;text-align:left}
+.ch-t1{min-width:0}
+.ch-t1 b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-t1 small{display:block;color:var(--muted);font-size:12px}
+
+/* ---------- Messages ---------- */
+.ch-msgs{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:3px;overscroll-behavior:contain}
+.ch-older{align-self:center;margin:4px 0 10px;padding:7px 14px;border-radius:999px;background:var(--surface);color:var(--muted);font-size:12px}
+.ch-day{align-self:center;margin:12px 0 6px;padding:3px 12px;border-radius:999px;background:var(--surface);color:var(--muted);font-size:11px}
+.ch-sys{align-self:center;margin:6px 0;padding:3px 12px;color:var(--muted);font-size:12px;text-align:center}
+
+.ch-m{display:flex;flex-direction:column;align-items:flex-start;max-width:82%;align-self:flex-start}
+.ch-m.me{align-items:flex-end;align-self:flex-end}
+.ch-m.first{margin-top:8px}
+.ch-b{background:var(--surface);border-radius:16px;border-bottom-left-radius:5px;padding:8px 12px;font-size:14px;line-height:1.4;min-width:0;word-break:break-word;cursor:pointer}
+.ch-m.me .ch-b{background:var(--gold);color:#2b1a00;border-radius:16px;border-bottom-right-radius:5px}
+.ch-t{white-space:pre-wrap;word-break:break-word}
+.ch-t a{color:var(--gold);word-break:break-all}
+.ch-m.me .ch-t a{color:#2b1a00;text-decoration:underline}
+.ch-img{display:block;max-width:100%;max-height:260px;border-radius:12px;margin-bottom:4px;object-fit:cover;background:var(--surface2)}
+.ch-imgbad{display:flex;align-items:center;justify-content:center;min-width:140px;min-height:90px;border-radius:12px;background:var(--surface2);color:var(--muted);font-size:12px;margin-bottom:4px}
+.ch-del{color:var(--muted);font-style:italic;font-size:13px}
+.ch-m.me .ch-del{color:#6b4a0a}
+.ch-time{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:3px;font-size:10px;opacity:.7}
+.ch-tk.r{color:var(--mint);opacity:1}
+.ch-m.me .ch-tk.r{color:#0b6b52}
+.ch-who{display:block;font-size:12px;font-weight:700;margin-bottom:2px}
+.ch-who.h0{color:var(--gold)}
+.ch-who.h1{color:var(--mint)}
+.ch-who.h2{color:var(--pink)}
+.ch-who.h3{color:#8fb0ff}
+.ch-act{display:none;margin-top:4px}
+.ch-m.sel .ch-act{display:block}
+.ch-act button{font-size:12px;color:var(--pink);padding:3px 6px}
+
+.ch-typing{min-height:18px;padding:0 16px 2px;color:var(--muted);font-size:12px;font-style:italic}
+
+/* ---------- Zone d'écriture ---------- */
+.ch-comp{display:flex;align-items:flex-end;gap:8px;padding:8px 12px;border-top:1px solid var(--line);background:var(--surface)}
+.ch-comp textarea{flex:1;min-width:0;resize:none;max-height:110px;background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:9px 14px;color:var(--text);font:inherit;font-size:14px;line-height:1.35}
+.ch-comp textarea:focus-visible{outline:2px solid var(--gold)}
+.ch-comp .btn{align-self:flex-end}
+.ch-lock{display:none;padding:14px 16px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5;border-top:1px solid var(--line);background:var(--surface)}
+#cv.locked .ch-comp{display:none}
+#cv.locked .ch-lock{display:block}
+
+/* ---------- Nouvelle discussion / nouveau groupe / ajout de membres ---------- */
+.ch-seg{display:flex;gap:6px;margin:12px 16px 0;background:var(--surface);border-radius:12px;padding:4px}
+.ch-seg button{flex:1;padding:8px 0;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted)}
+.ch-seg button.on{background:var(--gold);color:#2b1a00}
+.ch-pad{padding:12px 16px 8px}
+.ch-grp{display:none;padding:0 16px 8px}
+#cn.grp .ch-grp{display:block}
+.ch-chips{display:none;flex-wrap:wrap;gap:6px;padding:0 16px 8px}
+#cn.multi .ch-chips{display:flex}
+.ch-chip{display:inline-flex;align-items:center;gap:4px;background:var(--surface2);border-radius:999px;padding:4px 6px 4px 12px;font-size:13px}
+.ch-chip button{color:var(--muted);font-size:16px;line-height:1;padding:0 6px}
+.ch-user{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 2px;border-bottom:1px solid var(--line)}
+.ch-user span{flex:1;min-width:0;font-size:15px}
+.ch-user span small{display:block;color:var(--muted);font-size:12px}
+.ch-user .tick{flex:0 0 24px;height:24px;border:1.5px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:#2b1a00}
+.ch-user.on .tick{background:var(--gold);border-color:var(--gold)}
+.ch-foot{display:none;padding:12px 16px;border-top:1px solid var(--line)}
+.ch-foot .btn{width:100%;padding:12px}
+#cn.multi .ch-foot{display:block}
+
+/* ---------- Infos de la conversation ---------- */
+.ch-info{text-align:center;padding:8px 0 14px}
+.ch-info .ch-av{margin:0 auto 10px}
+.ch-info h2{font-size:20px}
+.ch-sec{margin:14px 0}
+.ch-sec h3{font-size:14px;color:var(--muted);margin-bottom:6px}
+.ch-mem{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ch-mem .nm{flex:1;min-width:0;font-size:14px;word-break:break-word}
+.ch-mem .nm small{display:block;color:var(--gold);font-size:11px}
+.ch-mem .btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ch-rename{display:flex;gap:8px;margin:6px 0 12px}
+.ch-wide{display:block;width:100%;padding:12px;margin-top:10px;border-radius:12px;background:var(--surface);font-weight:700;font-size:14px;text-align:center}
+.ch-wide.ch-danger{color:var(--pink)}
+
+/* ---------- Photo en grand ---------- */
+#ch-lb{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+#ch-lb.on{display:flex}
+#ch-lb img{max-width:100%;max-height:100%;border-radius:8px}
