@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: dracula-system
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: ADMIN_CODE
+        sync: false        # à saisir dans Render (code long, 20 caractères ou plus)
+      - key: GITHUB_TOKEN
+        sync: false        # jeton GitHub avec accès au dépôt de sauvegarde
+      - key: BACKUP_REPO
+        sync: false        # ex : tonpseudo/dracula-backup (dépôt PRIVÉ)
+      - key: BACKUP_BRANCH
+        value: main
+      - key: BACKUP_INTERVAL_MIN
+        value: "3"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false        # facultatif : alerte Telegram à chaque achat
+      - key: TELEGRAM_CHAT_ID
+        sync: false        # facultatif : ta discussion Telegram
+      - key: RESEND_API_KEY
+        sync: false        # facultatif : alerte e-mail à chaque achat
+      - key: NOTIFY_EMAIL_TO
+        sync: false        # facultatif : ton adresse e-mail
+      - key: NOTIFY_EMAIL_FROM
+        value: "Dracula System <onboarding@resend.dev>"
