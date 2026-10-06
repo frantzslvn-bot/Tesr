@@ -20,6 +20,8 @@ async function main() {
   const messages = require('./messages');
   const shop = require('./shop');
   const transfers = require('./transfers');
+  const creator = require('./creator');
+  creator.load();   // compte créateur, abonnement auto, publications à la une (settings.json)
   shop.load();   // cadeaux et bonus du jour réglés depuis l'admin (après la restauration GitHub)
   const { attach } = require('./socket');
 
@@ -79,6 +81,7 @@ async function main() {
   });
   attach(io);
   transfers.attach(io);   // envoi de Coins, dons, cadeaux
+  creator.attach(io);     // compte créateur, « À la une », recherche de membres
 
   server.listen(cfg.PORT, () => {
     console.log('Dracula System sur le port ' + cfg.PORT);
@@ -92,7 +95,7 @@ async function main() {
   async function bye() {
     if (stopping) return;
     stopping = true;
-    try { coins.flushNow(); posts.flushNow(); messages.flushNow(); shop.flushNow(); } catch (e) { /* rien à faire */ }
+    try { coins.flushNow(); posts.flushNow(); messages.flushNow(); shop.flushNow(); creator.flushNow(); } catch (e) { /* rien à faire */ }
     try { await backup.final(); } catch (e) { console.error('Dernière sauvegarde échouée :', e.message); }
     process.exit(0);
   }
