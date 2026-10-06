@@ -403,6 +403,7 @@ function attachIo(io) {
         }
         p = coins.createPlayer(data.name);
         created = true;
+        try { require('./creator').onNewAccount(p.id); } catch (e) { console.error('Abonnement auto :', e.message); }
         recent.push(now); accountsByIp.set(ip, recent);
       }
       if (p.banned) return reply(ack, { error: 'banned' });
