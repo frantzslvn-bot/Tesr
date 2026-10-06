@@ -266,6 +266,18 @@ function toggleFollow(pid, target) {
   save();
   return { ok: true, following: i === -1, followers: followersOf(target) };
 }
+// Abonne pid à target (sans effet s'il l'est déjà). Utilisé par l'abonnement automatique au créateur.
+function ensureFollow(pid, target) {
+  if (!pid || !target || pid === target) return false;
+  const a = coins.get(pid), t = coins.get(target);
+  if (!a || a.banned || !t || t.banned) return false;
+  const list = db.follows[pid] || (db.follows[pid] = []);
+  if (list.indexOf(target) !== -1) return false;
+  list.push(target); save();
+  return true;
+}
+function isFollowing(pid, target) { return (db.follows[pid] || []).indexOf(target) !== -1; }
+function countOf(id) { let n = 0; for (const x of db.posts) if (x.by === id) n++; return n; }
 function followersOf(id) {
   let n = 0;
   for (const k in db.follows) if (db.follows[k].indexOf(id) !== -1) { const a = coins.get(k); if (a && !a.banned) n++; }
@@ -311,5 +323,5 @@ process.on('exit', () => { try { flushNow(); } catch (e) { /* rien */ } });
 module.exports = {
   IMG_NAME, MAX_IMG_BYTES, isJpeg, imgPath, saveImage, create, feed, toggleLike, listComments, addComment,
   deleteComment, deletePost, purgeUser, report, reportList, clearReports, toggleFollow, profile, getOne,
-  claimUpload, dropImage, sweepUploads, flushNow
+  claimUpload, dropImage, sweepUploads, flushNow, ensureFollow, isFollowing, countOf
 };
